@@ -1,0 +1,439 @@
+import React, { Component } from 'react'
+import NavigationHome from '../NavigationHome'
+
+
+export default class CreateDocument extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      Titulo: "",
+      Autor: "",
+      ISBN: "",
+      Genero: "",
+      descripcion: "",
+      ISSN: "",
+      img: "",
+      fileUrl: "",
+    };
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+
+  handleSubmit(e) {
+    e.preventDefault();
+    const { Titulo, Autor, ISBN, Genero, descripcion, ISSN, img } = this.state;
+    console.log(Titulo, Autor, ISBN, Genero, descripcion, ISSN, img );
+    fetch("http://localhost:4000/api/documentos/", {
+      method: "POST",
+      crossDomain: true,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({
+        Titulo,
+        Autor,
+        ISBN,
+        Genero,
+        descripcion,
+        ISSN,
+        img,
+      }),
+    }).then((res) => res.json())
+      .then((data) => {
+        console.log(data, "DocumentRegister");
+        window.location.href = "./HomePageInstS"
+      });
+  }
+
+
+  render() {
+    return (
+      <>
+        <section>
+        <NavigationHome /><br></br>
+          <form className="formulario" encType='multipart/form-data' onSubmit={this.handleSubmit}>
+            <fieldset>
+              <legend>Registrar Libro </legend>
+
+              <div className="campo">
+                <label>Titulo</label>
+                <input
+                  type="text"
+                  className="input-text"
+                  placeholder=" Titulo(s)"
+                  onChange={(e) => this.setState({ Titulo: e.target.value })}
+                />
+              </div>
+
+              <div className="campo">
+                <label>Autor(s)</label>
+                <input type="text" className="input-text" placeholder="Autor(s)"
+                  onChange={(e) => this.setState({ Autor: e.target.value })} />
+              </div>
+
+              <div className="campo">
+              <label>Genero</label>
+                <select className="formulario__campo"
+                  onChange={(e) => this.setState({ Genero: e.target.value })}>
+                  <option disabled="">Selecciona una opción</option>
+                  <option value="Artes y Diseño">Artes y Diseño</option>
+                  <option value="Ciencias">Ciencias</option>
+                  <option value="Ciencias Políticas y Sociales">Ciencias Políticas y Sociales</option>
+                  <option value="Contaduría y Administración">Contaduría y Administración</option>
+                  <option value="Arquitectura">Arquitectura</option>
+                  <option value="Derecho">Derecho</option>
+                  <option value="Economía">Economía</option>
+                  <option value="Filosofía y Letras">Filosofía y Letras</option>
+                  <option value="Ingeniería">Ingeniería</option>
+                  <option value="Medicina">Medicina</option>
+                  <option value="Medicina Veterinaria y Zootecnia">Medicina Veterinaria y Zootecnia</option>
+                  <option value="Música">Música</option>
+                  <option value="Odontología">Odontología</option>
+                  <option value="Psicología">Psicología</option>
+                  <option value="Química">Química</option>
+                  <option value="Informática">Informática</option>
+                  <option value="Artes Cinematográficas">Artes Cinematográficas</option>
+                  <option value="Enfermería y Obstetricia">Enfermería y Obstetricia</option>
+                </select>
+              </div>
+
+              <div className="campo">
+                <label>Descripcion</label>
+                <input
+                  type="text"
+                  className="input-text"
+                  placeholder="Descripción breve"
+                  onChange={(e) => this.setState({ descripcion: e.target.value })} />
+              </div>
+
+              <div>
+                <label>Si su documento no es un libro o revista no escriba nada solo envie</label>
+              </div>
+
+              <div className="campo">
+                <label>Libro</label>
+                <input
+                  type="text"
+                  className="input-text"
+                  placeholder="0-7645-2641-3"
+                  onChange={(e) => this.setState({ ISBN: e.target.value })} />
+              </div>
+
+              <div className="campo">
+                <label>o Revista</label>
+                <input
+                  type="text"
+                  className="input-text"
+                  placeholder="0317-8471"
+                  onChange={(e) => this.setState({ ISSN: e.target.value })} />
+              </div>
+              
+              
+
+              <div className="campo">
+                <label>Link de la imagen</label>
+                <input
+                  type="text"
+                  className="input-text"
+                  placeholder="https://http2.mlstatic.com/D_NQ_NP_805003-MLM46966539633_082021-O.webp"
+                  onChange={(e) => this.setState({ img: e.target.value })} />
+              </div>
+
+              <div className="campo">
+                <label>Adjunta tu archivo</label>
+                <input
+                  type="file"
+                  onChange={(e) => this.setState({ fileUrl: e.target.files[0] })} />
+              </div>
+
+
+              <div className="alinear-derecha flex">
+                <input className="boton w-sm-100" type="submit" value="ENVIAR" />
+              </div>
+            </fieldset>
+          </form>
+        </section>
+      </>
+    )
+  }
+}
+
+
+
+----------------------------------------------------------------------------------
+//ALTERNATIVA 2
+
+import React, { useState } from 'react'
+
+ function CreateDocument() {
+  const [fileUrl, setFileUrl] = useState({});
+
+  const fileOnChange = (event) => {
+    setFileUrl(event.target.files[0])
+  };
+
+  const sendFile = (event) => {
+    let formData = new FormData();
+
+    formData.append("myFile", fileUrl);
+
+    fetch("http://localhost:4000/api/documentos/", {
+      method: "POST",
+      body: formData,
+      crossDomain: true,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    })
+      .then((res) => res.text()
+        .then((resBody) => {
+          console.log(resBody);
+        })
+      )
+
+  };
+
+
+
+  return (
+    <div className="CreateDocument">
+      <input type="file" onChange={fileOnChange} />
+      <button onClick={sendFile}>ENVIAR</button>
+    </div>
+  )
+}
+
+export default CreateDocument;
+
+--------------------------------
+
+const getFile = (event) => {
+      console.log(event)
+      //Se captura el atrchivo
+      const [fileUrl] = event.target.files;
+      this.fileTmp = {
+        fileRaw: fileUrl,
+        fileName: fileUrl.name
+
+      }
+    };
+
+    const sendFile = (event) => {
+      let formData = new FormData();
+
+      formData.append("myFile");
+    };
+
+-----------------------------------------------------------
+<form method="post" action="#" id="#" onSubmit={onSubmit}>
+      <div className="form-group files">
+        <label>Upload Your File </label>
+        <input type="file"
+          onChange={onInputChange}
+          className="form-control"
+          multiple />
+      </div>
+
+      <button>ENVIAR</button>
+    </form>
+
+------------------------------------------------------------------
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+
+
+export default function DetailsDocuments() {
+
+  const [Documents, setDocuments] = useState({
+    Titulo: "", 
+    Autor: "", 
+    ISBN: "", 
+    Genero: "", 
+    descripcion: "", 
+    ISSN: "", 
+    img: "",
+    _id: ""
+  })
+
+  const params = useParams();
+
+  useEffect(() => {
+    (async () => {
+
+      const res = await axios.get(`http://localhost:4000/api/documentos/${params.id}`);
+      setDocuments(res.data);
+    })();
+  }, [params.id]);
+
+  /*const handleDelete = async () => {
+    const res = await axios.delete(`http://localhost:4000/api/documentos/${params.id}`);
+    console.log(res)
+  }*/
+
+  return (
+    <div className="row">
+      <div className="col-md-4 offset-md-4">
+        <div className="card bg-dark">
+          <img src={Documents.img} alt={Documents.Titulo} className="card-img-top" />
+          <div className="card-body">
+            <h1>{Documents.img}</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+---------------------------------------------------------------------------------
+Alternativa de mostrar datos
+
+import React, { useEffect, useState } from 'react'
+import axios from 'axios';
+import {useNavigate} from 'react-router-dom'
+
+
+export default function Loader() {
+  const [documentos, setDocumentos] = useState([]);
+  const history = useNavigate();
+
+  useEffect(() => {
+    (async () => {
+
+      const res = await axios.get('http://localhost:4000/api/documentos/');
+      setDocumentos(res.data);
+    }
+    )();
+  }, []);
+
+  return (
+    <main className="contenedor"><br></br>
+      <div className="grid">
+        {/*--Inicio .Producto--*/}
+        {documentos.map((Documento) => (
+          <div
+            className="producto"
+            onClick={() => history("./edit/:id" + Documento._id)}
+            key={Documento._id}
+          >
+             {/*<a href="./edit/:id">*/}
+            <img className="producto__imagen" src={Documento.img} alt={Documento.Titulo} />
+            <div className="producto__informacion">
+              <p className="producto__nombre" src={Documento.Titulo} />
+            </div>
+            {/*</a>*/}
+          </div>
+        ))}
+        {/*--fin .producto--*/}
+
+
+        {/*--Inicio .Producto--*/}
+        <div className="producto">
+          <a href="producto.html">
+            <img className="producto__imagen" src="./images/libro.jpg" alt="imagen camisa" />
+            <div className="producto__informacion">
+              <p className="producto__nombre">Informatics</p>
+            </div>
+          </a>
+        </div>
+        {/*--fin .producto--*/}
+      </div>
+    </main>
+  )
+}
+
+----------------------------------------------------------------
+
+
+import React from 'react'
+import { FaSearch } from 'react-icons/fa'
+//import { useNavigate } from 'react-router-dom';
+
+export default function SearchForm() {
+
+
+
+  return (
+    <>
+      <div className="header">
+        <div className="row2">
+          <div className="search">
+            <input type="text" placeholder="Enter el dombre del documento.."
+            />
+            <button>
+              <FaSearch className='text-purple' size={32} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+----------------------------------------------------------------------------
+
+import React from 'react'
+import { FaSearch } from 'react-icons/fa'
+//import { useNavigate } from 'react-router-dom';
+
+export default function SearchForm() {
+
+
+  const searchHandle = (event) => {
+    console.warn(event.target.value)
+  }
+  return (
+    <>
+      <div className='search-form'>
+        <div className='container'>
+          <div className='search-form-content'>
+            <form className='search-form'>
+              <div className='search-form-elem flex flex-sb bg-white'>
+                <input type="text" className='form-control' placeholder='Buscar ...' onChange={searchHandle} />
+                <button type="submit" className='flex flex-c' >
+                  <FaSearch className='text-purple' size={32} />
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
+-----------------------------------------------------------------------------------
+#Alternativa del diseño de la interfaz inicial details
+<>
+      <div className="overlay">
+        <div className="overlay-inner">
+          <button className="close"></button>
+          <div className="inner-box">
+            <img src="/images/libro.jpg" alt="" />
+            <div className="info">
+              <h1>The Computer and the Brain</h1>
+              <label>Autor</label>
+              <h3>John von Neumann</h3><br />
+              <label>Hora y fecha de subida</label>
+              <h4>16:00:25.250 y  <span>2022-12-01</span></h4><br />
+              <a a href='#'><button>Descargar</button></a>
+            </div>
+          </div>
+          <h4 className="description">En esta obra clásica, uno de los más grandes matemáticos del siglo XX explora las
+            analogías entre las máquinas informáticas y el cerebro humano vivo. John von Neumann, cuyas muchas
+            contribuciones a la ciencia, las matemáticas y la ingeniería incluyen el marco organizacional básico en el
+            corazón de las computadoras de hoy, concluye que el cerebro opera tanto digital como analógicamente, pero
+            también tiene su propio lenguaje estadístico peculiar."</h4>
+        </div>
+      </div>
+    </>
+
+
+///////////////
+descargar documento
+<a href={require('../docs/ReactJS.pdf')} id="enlaceDescargarPdf"
+                    download="ReactJS.pdf"
+                >Tu dispositivo no puede visualizar los PDF, da click aquí para descargarlo</a>
